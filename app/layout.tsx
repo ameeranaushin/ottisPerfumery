@@ -1,20 +1,21 @@
-import type { Metadata } from "next";
-import { EB_Garamond, Lora } from "next/font/google"; // Lora as a solid Georgia alternative Google font, EB Garamond for Garamond
+﻿import type { Metadata } from "next";
+import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
 
-const lora = Lora({
-  variable: "--font-georgia",
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
-const ebGaramond = EB_Garamond({
-  variable: "--font-garamond",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
   title: "Ottis Perfumery House",
-  description: "A Legacy Born in Tamil Nadu — Built on Pollock Street",
+  description: "A Legacy Born in Tamil Nadu  Built on Pollock Street",
 };
 
 export default function RootLayout({
@@ -25,9 +26,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${lora.variable} ${ebGaramond.variable} scroll-smooth antialiased`}
+      className={`${cormorant.variable} ${inter.variable} scroll-smooth antialiased`}
     >
-      <body className="font-garamond bg-white flex flex-col min-h-screen text-navy">
+      <body className="font-inter bg-navy flex flex-col min-h-screen text-steel">
         {children}
       </body>
     </html>

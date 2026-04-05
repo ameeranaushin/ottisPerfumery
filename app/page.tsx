@@ -1,109 +1,158 @@
-import React from "react";
-import { MessageCircle } from "lucide-react";
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { MessageCircle, Menu, X } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
 export default function Home() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
   const WHATSAPP_NUMBER = "919831013846";
-  const getWhatsAppLink = (message: string) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  const getWhatsAppLink = (message) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalScroll = document.documentElement.scrollTop;
+      const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scroll = `${totalScroll / windowHeight}`;
+      setScrollProgress(Number(scroll) * 100);
+    }
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <>
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 w-full bg-[#0D1B2A] text-[#C8D6E5] p-4 shadow-md bg-opacity-95 backdrop-blur">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link href="/" className="font-georgia text-2xl tracking-widest text-[#C8D6E5]">OTTIS</Link>
-          <div className="hidden md:flex gap-8 text-sm uppercase tracking-wider font-semibold">
-            <a href="#boutique" className="hover:text-white transition">The Boutique</a>
-            <a href="#warehouse" className="hover:text-white transition">Wholesale/B2B</a>
-            <a href="#legacy" className="hover:text-white transition">Our Roots</a>
-            <a href="#contact" className="hover:text-white transition">Contact</a>
+      <div id="progress" style={{ width: `${scrollProgress}%` }}></div>
+
+      <nav className="sticky top-0 z-50 w-full h-[64px] flex items-center bg-[#0D1B2A]/92 backdrop-blur-[12px] border-b border-[#C8D6E5]/15 transition-all">
+        <div className="max-w-[1100px] w-full mx-auto flex items-center justify-between px-6 lg:px-10">
+          <Link href="/" className="font-cormorant text-2xl tracking-widest text-[var(--off-white)] font-bold">OTTIS</Link>
+
+          <div className="hidden md:flex items-center gap-8 text-[13px] uppercase tracking-[0.08em] font-semibold">
+            <a href="#boutique" className="text-[var(--steel)] hover:text-[var(--off-white)] pb-1 border-b-2 border-transparent hover:border-[var(--accent)] transition-colors h-[48px] flex items-center">The Boutique</a>
+            <a href="#warehouse" className="text-[var(--steel)] hover:text-[var(--off-white)] pb-1 border-b-2 border-transparent hover:border-[var(--accent)] transition-colors h-[48px] flex items-center">Wholesale/B2B</a>
+            <a href="#legacy" className="text-[var(--steel)] hover:text-[var(--off-white)] pb-1 border-b-2 border-transparent hover:border-[var(--accent)] transition-colors h-[48px] flex items-center">Our Roots</a>
+            <a href="#contact" className="text-[var(--steel)] hover:text-[var(--off-white)] pb-1 border-b-2 border-transparent hover:border-[var(--accent)] transition-colors h-[48px] flex items-center">Contact</a>
           </div>
+
+          <button
+            className="md:hidden p-2 text-[var(--off-white)] cursor-pointer relative z-50 focus:outline-none min-h-[48px] min-w-[48px] flex items-center justify-center"
+            onClick={(e) => {
+              e.preventDefault();
+              setIsMobileMenuOpen(!isMobileMenuOpen);
+            }}
+            aria-label="Toggle menu"
+          >
+            <Menu size={28} />
+          </button>
         </div>
       </nav>
 
-      {/* Floating WhatsApp */}
-      <a href={getWhatsAppLink("Hi Ottis Perfumery, I'm interested in booking a bespoke blending session!")} target="_blank" rel="noreferrer" title="Bespoke Blending Sessions" className="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-xl hover:scale-105 transition-transform flex items-center gap-2">
-        <MessageCircle size={28} />
-      </a>
+      <div 
+        className={`fixed inset-0 bg-black/60 z-[60] transition-opacity duration-300 md:hidden ${isMobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+        onClick={() => setIsMobileMenuOpen(false)}
+      ></div>
 
-      {/* Main Content */}
-      <main className="w-full bg-[#FAFAFA]">
-        
-        {/* HERO SECTION & BRAND ENTRY */}
-        <section className="relative w-full h-[85vh] flex flex-col items-center justify-center bg-[#0D1B2A] text-center p-6 overflow-hidden">
-          {/* High-def minimalist background image */}
-          <div className="absolute inset-0 z-0 opacity-40">
+      <div 
+        className={`fixed top-0 left-0 h-full w-[75vw] max-w-[280px] bg-[var(--navy)] border-r border-[var(--silver)] z-[70] transform transition-transform duration-300 ease-in-out md:hidden flex flex-col ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
+      >
+        <div className="flex items-center justify-between p-6 mt-2">
+          <Link href="/" className="font-cormorant text-2xl tracking-widest text-[var(--off-white)] font-bold">OTTIS</Link>
+          <button onClick={() => setIsMobileMenuOpen(false)} className="text-[var(--off-white)] p-2 min-h-[48px] min-w-[48px] flex items-center justify-center">
+            <X size={28} />
+          </button>
+        </div>
+        <div className="flex flex-col mt-8 px-6 text-[13px] uppercase tracking-widest font-semibold">
+          <a href="#boutique" onClick={() => setIsMobileMenuOpen(false)} className="text-[var(--off-white)] py-4 border-b border-[var(--silver)]/10 flex items-center min-h-[48px]">The Boutique</a>
+          <a href="#warehouse" onClick={() => setIsMobileMenuOpen(false)} className="text-[var(--off-white)] py-4 border-b border-[var(--silver)]/10 flex items-center min-h-[48px]">Wholesale/B2B</a>
+          <a href="#legacy" onClick={() => setIsMobileMenuOpen(false)} className="text-[var(--off-white)] py-4 border-b border-[var(--silver)]/10 flex items-center min-h-[48px]">Our Roots</a>
+          <a href="#contact" onClick={() => setIsMobileMenuOpen(false)} className="text-[var(--off-white)] py-4 flex items-center min-h-[48px]">Contact</a>
+        </div>
+      </div>
+
+      <main className="w-full bg-[var(--navy)]">
+
+        <section className="relative w-full min-h-[100svh] md:min-h-[90vh] flex flex-col items-center justify-center text-center px-[24px] overflow-hidden bg-[var(--navy)]">
+          <div className="absolute inset-0 z-0">
             <img src="https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80" alt="Minimalist Signature EDP Bottle" className="w-full h-full object-cover object-center" />
           </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0D1B2A] to-transparent z-0"></div>
-          
-          <div className="z-10 flex flex-col items-center max-w-4xl mt-12">
-            <h1 className="text-5xl md:text-7xl font-georgia mb-6 font-normal tracking-wide leading-tight text-[#C8D6E5]">
+          <div className="absolute inset-0 transition-opacity bg-gradient-to-b from-[#0D1B2A]/55 to-[#0D1B2A]/85 z-0"></div>
+
+          <div className="z-10 flex flex-col items-center max-w-4xl mt-0 w-full">
+            <h1 className="text-[clamp(2.2rem,6vw,4rem)] font-cormorant font-bold text-[var(--off-white)] mb-4 -tracking-[0.01em] leading-tight">
               OTTIS PERFUMERY.
             </h1>
-            <p className="text-xl md:text-3xl font-garamond italic max-w-3xl mb-12 text-[#C8D6E5]/90">
-              "Authentic Artistry. Affordable Luxury.<br/>From the Heart of Pollock Street."
+            <p className="text-[clamp(1rem,2.5vw,1.25rem)] font-cormorant italic text-[var(--silver)] max-w-[560px] leading-[1.6] mb-6">
+              &quot;Authentic Artistry. Affordable Luxury.<br/>From the Heart of Pollock Street.&quot;
             </p>
-            <div className="flex flex-col sm:flex-row gap-6">
-              <a href="#boutique" className="bg-[#C8D6E5] text-[#0D1B2A] px-10 py-4 uppercase tracking-widest text-sm font-semibold hover:bg-white transition duration-300">
+            <div className="h-[1px] w-[120px] bg-[var(--silver)]/30 mx-auto mb-10"></div>
+
+            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+              <a href="#boutique" className="bg-[var(--accent)] text-[var(--navy)] rounded-[4px] px-[28px] py-[14px] font-semibold tracking-[0.05em] transition-all duration-200 hover:bg-[var(--silver)] hover:-translate-y-[2px] hover:shadow-[0_4px_20px_rgba(168,197,232,0.3)] w-full sm:w-auto text-center min-h-[48px] flex items-center justify-center">
                 Shop Collection
               </a>
-              <a href={getWhatsAppLink("Hi Ottis Perfumery, I'd like to schedule a fragrance consultation.")} target="_blank" rel="noreferrer" className="border border-[#C8D6E5] text-[#C8D6E5] px-10 py-4 uppercase tracking-widest text-sm hover:bg-[#C8D6E5] hover:text-[#0D1B2A] transition duration-300">
+              <a href={getWhatsAppLink("Hi Ottis Perfumery, I'd like to schedule a fragrance consultation.")} target="_blank" rel="noreferrer" className="bg-transparent border border-[var(--silver)] text-[var(--off-white)] rounded-[4px] px-[28px] py-[14px] font-semibold tracking-[0.05em] transition-all duration-200 hover:bg-[var(--silver)]/10 hover:-translate-y-[2px] w-full sm:w-auto text-center min-h-[48px] flex items-center justify-center">
                 WhatsApp Consultation
               </a>
             </div>
           </div>
         </section>
 
-        {/* 2. PRODUCT ARCHITECTURE */}
-        
-        {/* The Fragrance Boutique (Consumer Retail) */}
-        <section id="boutique" className="py-24 px-6 text-[#0D1B2A]">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-20">
-              <h2 className="text-5xl font-georgia mb-6 uppercase tracking-widest">The Fragrance Boutique</h2>
-              <div className="w-24 h-px bg-[#0D1B2A]/20 mx-auto mb-6"></div>
-              <p className="text-2xl italic font-garamond text-gray-600 max-w-2xl mx-auto">Consumer Retail Collections</p>
+        <section id="boutique" className="bg-[var(--midnight)] py-[80px] px-[24px] md:py-[100px] md:px-[40px]">
+          <div className="max-w-[1100px] mx-auto">
+            <div className="text-center mb-[60px] md:mb-[80px]">
+              <h2 className="font-cormorant text-[var(--off-white)] font-bold mb-4 flex justify-center items-center gap-3">
+                <span className="w-[24px] h-[1px] bg-[var(--accent)] inline-block"></span>The Fragrance Boutique
+              </h2>
+              <p className="text-[0.75rem] tracking-[0.15em] uppercase text-[var(--steel)]">Consumer Retail Collections</p>
             </div>
 
-            {/* Pure Attars */}
-            <div className="mb-24">
-              <h3 className="text-3xl font-georgia mb-10 border-b border-[#0D1B2A]/10 pb-4">Pure Attars</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6">
+            <div className="mb-[100px]">
+              <h3 className="text-2xl font-cormorant text-[var(--off-white)] mb-8 border-b border-[var(--silver)]/10 pb-4 flex items-center gap-3">
+                <span className="w-[24px] h-[1px] bg-[var(--accent)] inline-block"></span> Pure Attars
+              </h3>
+              <div className="grid grid-cols-1 gap-6 min-[480px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
                 {[
-                  { name: 'Rose', file: 'rose.avif' }, 
-                  { name: 'Sandalwood', file: 'sandalwood.avif' }, 
-                  { name: 'Oud', file: 'oudchips.webp' }, 
-                  { name: 'Khas', file: 'vetiver.avif' }, 
-                  { name: 'Mitti', file: 'mitti.avif' }
+                  { name: "Rose", file: "rose.avif" },
+                  { name: "Sandalwood", file: "sandalwood.avif" },
+                  { name: "Oud", file: "oudchips.webp" },
+                  { name: "Khas", file: "vetiver.avif" },
+                  { name: "Mitti", file: "mitti.avif" }
                 ].map((attar) => (
-                  <div key={attar.name} className="group bg-white border border-gray-100 text-center hover:shadow-xl transition-all duration-300 flex flex-col h-full overflow-hidden">
-                    <div className="w-full h-48 bg-gray-100 relative">
-                      <img src={`/images/${attar.file}`} alt={`${attar.name} Attar`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div key={attar.name} className="group bg-[var(--midnight)] border border-[rgba(200,214,229,0.12)] rounded-[12px] overflow-hidden transition-all duration-250 hover:border-[var(--accent)]/40 hover:-translate-y-[4px] hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)] flex flex-col h-full">
+                    <img src={`/images/${attar.file}`} alt={`${attar.name} Attar`} loading="lazy" className="w-[100%] aspect-[4/3] object-cover filter brightness-90 group-hover:brightness-[1.05] transition-all duration-250" />
+                    <div className="flex-1 flex flex-col items-center">
+                      <h4 className="text-[1rem] font-semibold text-[var(--off-white)] p-[16px] pb-[6px] w-[100%] text-center">{attar.name}</h4>
                     </div>
-                    <div className="p-6 flex flex-col flex-1">
-                      <h4 className="text-xl mb-4 font-georgia">{attar.name}</h4>
-                      <a href={getWhatsAppLink(`Hi Ottis Perfumery, I am interested in purchasing the ${attar.name} Pure Attar. Could you provide more details and pricing?`)} target="_blank" rel="noreferrer" className="mt-auto text-xs uppercase tracking-widest border-b border-[#0D1B2A] pb-1 hover:text-[#a54f4f] hover:border-[#a54f4f] transition inline-block mx-auto">
-                        Inquire on WhatsApp
-                      </a>
-                    </div>
+                    <a href={getWhatsAppLink(`Hi Ottis Perfumery, I am interested in purchasing the ${attar.name} Pure Attar.`)} target="_blank" rel="noreferrer" className="w-[100%] bg-transparent border-t border-[rgba(200,214,229,0.1)] text-[var(--accent)] p-[12px] text-[0.85rem] tracking-[0.05em] text-center transition-all duration-200 hover:bg-[#A8C5E8]/10 min-h-[48px] flex items-center justify-center font-inter uppercase mt-4">
+                      Inquire
+                    </a>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Inspired EDPs */}
             <div>
-              <h3 className="text-3xl font-georgia mb-10 border-b border-[#0D1B2A]/10 pb-4">Inspired EDPs <span className="text-lg font-garamond text-gray-500 italic lowercase ml-4">(30ml – 100ml)</span></h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {['Regular', 'Premium', 'Signature'].map((tier) => (
-                  <div key={tier} className="bg-white border border-gray-100 p-10 flex flex-col items-center hover:shadow-xl transition duration-500">
-                    <h4 className="text-2xl mb-2 font-georgia uppercase tracking-widest">{tier} Tier</h4>
-                    <div className="w-12 h-px bg-[#a54f4f] my-6"></div>
-                    <p className="text-center text-gray-600 font-garamond mb-10 text-lg">Finely crafted EDP formulations for daily luxury, available in versatile 30ml to 100ml sizing.</p>
-                    <a href={getWhatsAppLink(`Hi Ottis Perfumery, I would like to explore your ${tier} Tier Inspired EDPs. Please share the catalog and prices.`)} target="_blank" rel="noreferrer" className="bg-[#0D1B2A] text-[#C8D6E5] px-8 py-3 text-sm uppercase tracking-widest hover:bg-black transition w-full text-center">
-                      Inquire on WhatsApp
+              <h3 className="text-2xl font-cormorant text-[var(--off-white)] mb-8 border-b border-[var(--silver)]/10 pb-4 flex items-center gap-3">
+                <span className="w-[24px] h-[1px] bg-[var(--accent)] inline-block"></span> Inspired EDPs <span className="text-[0.75rem] tracking-[0.15em] uppercase text-[var(--steel)] ml-2 whitespace-nowrap">(30ml  100ml)</span>
+              </h3>
+              <div className="grid grid-cols-1 gap-6 min-[480px]:grid-cols-2 lg:grid-cols-3">
+                {[
+                  { tier: "Regular", color: "bg-[var(--steel)]" },
+                  { tier: "Premium", color: "bg-[var(--accent)]" },
+                  { tier: "Signature", color: "bg-[#D4AF37]" }
+                ].map((item) => (
+                  <div key={item.tier} className="group relative bg-[var(--midnight)] border border-[rgba(200,214,229,0.12)] rounded-[12px] overflow-hidden transition-all duration-250 hover:border-[var(--accent)]/40 hover:-translate-y-[4px] hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)] flex flex-col h-full pt-[3px]">
+                    <div className={`absolute top-0 left-0 w-full h-[3px] ${item.color}`}></div>
+                    <div className="absolute top-[12px] right-[12px] px-3 py-1 rounded-full border border-[var(--silver)]/20 text-[0.65rem] uppercase tracking-widest text-[var(--silver)] text-center">{item.tier}</div>
+                    <div className="p-[24px] pt-[40px] flex-1 flex flex-col items-center">
+                      <h4 className="text-[1.1rem] font-semibold text-[var(--off-white)] mb-4 tracking-wider uppercase text-center">{item.tier} Collection</h4>
+                    </div>
+                    <a href={getWhatsAppLink(`Hi Ottis Perfumery, I would like to explore your ${item.tier} Tier Inspired EDPs.`)} target="_blank" rel="noreferrer" className="w-[100%] bg-transparent border-t border-[rgba(200,214,229,0.1)] text-[var(--accent)] p-[12px] text-[0.85rem] tracking-[0.05em] text-center transition-all duration-200 hover:bg-[#A8C5E8]/10 min-h-[48px] flex items-center justify-center font-inter uppercase">
+                      WhatsApp
                     </a>
                   </div>
                 ))}
@@ -112,162 +161,159 @@ export default function Home() {
           </div>
         </section>
 
-        {/* The Perfumer's Warehouse (Wholesale/B2B) */}
-        <section id="warehouse" className="py-24 bg-[#EBE9E1] px-6 text-[#0D1B2A] border-t border-gray-300">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-5xl font-georgia mb-6 uppercase tracking-widest">The Perfumer&apos;s Warehouse</h2>
-              <div className="w-24 h-px bg-[#0D1B2A]/20 mx-auto mb-6"></div>
-              <p className="text-2xl italic font-garamond text-gray-700 max-w-3xl mx-auto">Wholesale &amp; B2B Connect — Premium Industrial &amp; Corporate Offerings</p>
+        <section id="warehouse" className="bg-[var(--navy)] py-[80px] px-[24px] md:py-[100px] md:px-[40px]">
+          <div className="max-w-[1100px] mx-auto">
+            <div className="text-center mb-[60px] md:mb-[80px]">
+              <h2 className="font-cormorant text-[var(--off-white)] font-bold mb-4 flex justify-center items-center gap-3">
+                <span className="w-[24px] h-[1px] bg-[var(--accent)] inline-block"></span>The Perfumer&apos;s Warehouse
+              </h2>
+              <p className="text-[0.75rem] tracking-[0.15em] uppercase text-[var(--steel)]">Wholesale & B2B Connect  Premium Industrial & Corporate Offerings</p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 gap-6 min-[480px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {[
-                { name: 'Perfumery Compounds', file: 'sandalwood.avif' }, 
-                { name: 'Agarbatti Compounds', file: 'agarbatti.avif' }, 
-                { name: 'Hand Spray Raw Perfume', file: 'sprayperfume.avif' }, 
-                { name: 'Cosmetics Compounds', file: 'cosmeticCompund.avif' }, 
-                { name: 'Soap Compounds', file: 'soapCompound.avif' }, 
-                { name: 'Hair Oil Compounds', file: 'hairoilCompound.avif' }, 
-                { name: 'Phenyl Compounds', file: 'phenylCompound.avif' }
+                { name: "Perfumery Compounds", file: "sandalwood.avif" },
+                { name: "Agarbatti Compounds", file: "agarbatti.avif" },
+                { name: "Hand Spray Raw Perfume", file: "sprayperfume.avif" },
+                { name: "Cosmetics Compounds", file: "cosmeticCompund.avif" },
+                { name: "Soap Compounds", file: "soapCompound.avif" },
+                { name: "Hair Oil Compounds", file: "hairoilCompound.avif" },
+                { name: "Phenyl Compounds", file: "phenylCompound.avif" }
               ].map((compound) => (
-                <div key={compound.name} className="bg-[#FAFAFA] text-center flex flex-col items-center shadow-sm border border-gray-200 hover:border-[#0D1B2A] transition duration-300 overflow-hidden group">
-                  <div className="w-full h-40 bg-gray-200 overflow-hidden">
-                    <img src={`/images/${compound.file}`} alt={compound.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div key={compound.name} className="group bg-[var(--midnight)] border border-[rgba(200,214,229,0.12)] rounded-[12px] overflow-hidden transition-all duration-250 hover:border-[var(--accent)]/40 hover:-translate-y-[4px] hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)] flex flex-col h-full">
+                  <img src={`/images/${compound.file}`} loading="lazy" alt={compound.name} className="w-[100%] aspect-[4/3] object-cover filter brightness-90 group-hover:brightness-[1.05] transition-all duration-250" />
+                  <div className="flex-1 flex flex-col items-center justify-center p-[16px]">
+                    <h4 className="text-[1rem] font-semibold text-[var(--off-white)] pb-[6px] w-[100%] text-center">{compound.name}</h4>
                   </div>
-                  <div className="p-8 flex flex-col flex-1 w-full">
-                    <h4 className="text-xl mb-8 font-georgia leading-snug flex-1">{compound.name}</h4>
-                    <a href={getWhatsAppLink(`Hi Ottis Perfumery, I'd like to request a wholesale quote for ${compound.name} for a bulk order.`)} target="_blank" rel="noreferrer" className="w-full py-3 bg-transparent border border-[#0D1B2A] text-[#0D1B2A] uppercase tracking-wider text-xs font-bold hover:bg-[#0D1B2A] hover:text-[#C8D6E5] transition text-center px-2">
-                      Request Wholesale Quote
-                    </a>
-                  </div>
+                  <a href={getWhatsAppLink(`Hi Ottis Perfumery, I'd like to request a wholesale quote for ${compound.name} for a bulk order.`)} target="_blank" rel="noreferrer" className="w-[100%] bg-transparent border-t border-[rgba(200,214,229,0.1)] text-[var(--accent)] p-[12px] text-[0.85rem] tracking-[0.05em] text-center transition-all duration-200 hover:bg-[#A8C5E8]/10 min-h-[48px] flex items-center justify-center font-inter uppercase mt-2">
+                    Inquire
+                  </a>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* 3. THE "LEGACY & ROOTS" SECTION (Scroll-block just before Footer) */}
-        <section id="legacy" className="py-24 bg-[#0D1B2A] text-[#C8D6E5] px-6">
-          <div className="max-w-5xl mx-auto border border-[#C8D6E5]/10 p-8 md:p-16 bg-white/5 backdrop-blur-sm relative overflow-hidden">
-            
-            {/* Subtle background element (Family Tree concept) */}
-            <div className="absolute top-0 right-0 opacity-5 pointer-events-none w-2/3 h-full">
-              <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full stroke-current">
-                <path d="M100 20 L100 60 M100 60 L50 100 M100 60 L150 100 M50 100 L50 140 M150 100 L150 140" strokeWidth="1" fill="none"/>
-                <circle cx="100" cy="20" r="4" fill="currentColor"/>
-                <circle cx="50" cy="100" r="4" fill="currentColor"/>
-                <circle cx="150" cy="100" r="4" fill="currentColor"/>
-                <circle cx="50" cy="140" r="4" fill="currentColor"/>
-                <circle cx="150" cy="140" r="4" fill="currentColor"/>
-              </svg>
+        <section id="legacy" className="bg-[var(--midnight)] py-[80px] px-[24px] md:py-[100px] md:px-[40px] overflow-hidden">
+          <div className="max-w-[1100px] mx-auto">
+            <div className="text-center mb-[60px] md:mb-[80px] relative z-10">
+              <h2 className="font-cormorant text-[var(--off-white)] font-bold mb-4 flex justify-center items-center gap-3">
+                <span className="w-[24px] h-[1px] bg-[var(--accent)] inline-block"></span>Our Heritage
+              </h2>
+              <p className="text-[0.75rem] tracking-[0.15em] uppercase text-[var(--steel)]">A Three-Generation Lineage</p>
             </div>
 
-            <div className="text-center mb-16 relative z-10">
-              <h2 className="text-4xl md:text-5xl font-georgia mb-4 text-white">Our Heritage</h2>
-              <p className="text-xl font-garamond italic text-[#C8D6E5]/80">A Three-Generation Lineage</p>
-            </div>
+            <div className="relative space-y-[60px] md:space-y-[80px] z-10">
+              {/* Desktop timeline line */}
+              <div className="hidden md:block absolute top-[50px] bottom-[50px] left-[50%] w-[2px] border-l-2 border-dashed border-[var(--silver)]/50" style={{ transform: "translateX(-50%)" }}></div>
 
-            <div className="space-y-20 relative z-10">
-              {/* The Journey */}
-              <div className="flex flex-col md:flex-row gap-10 items-center">
-                <div className="md:w-1/3">
-                  <div className="aspect-square bg-gray-800 shadow-2xl rounded-full overflow-hidden border-4 border-[#0D1B2A]">
-                    <img src="/images/kaderbashaSahib.jpeg" alt="OT Kader Basha Sahib" className="w-full h-full object-cover object-top" />
-                  </div>
+              <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
+                <div className="w-[100%] md:w-1/2 flex justify-center md:justify-end relative">
+                  <div className="absolute top-[-20px] left-[10%] md:left-[auto] md:right-[260px] z-20 bg-[var(--royal)] text-[var(--off-white)] w-[40px] h-[40px] rounded-full flex items-center justify-center font-bold text-[1rem]">I</div>
+                  <img src="/images/kaderbashaSahib.jpeg" loading="lazy" alt="OT Kader Basha Sahib" className="w-[100%] max-w-[320px] aspect-[4/5] object-cover object-top rounded-[8px] border border-[rgba(200,214,229,0.2)] relative z-10" />
                 </div>
-                <div className="md:w-2/3">
-                  <h3 className="text-sm font-bold tracking-widest text-[#C8D6E5]/60 mb-2 uppercase">The Journey</h3>
-                  <h4 className="text-3xl mb-4 font-georgia text-white">OT Kader Basha Sahib</h4>
-                  <p className="text-xl leading-relaxed font-garamond text-[#C8D6E5]/90">
+                <div className="w-[100%] md:w-1/2 text-center md:text-left md:pr-4">
+                  <h3 className="text-[0.75rem] tracking-[0.15em] uppercase text-[var(--steel)] mb-2">The Journey</h3>
+                  <h4 className="text-2xl font-cormorant text-[var(--off-white)] mb-4">OT Kader Basha Sahib</h4>
+                  <p className="text-base text-[var(--steel)] leading-[1.7]">
                     The story begins with a monumental 1,000-mile journey. From the botanical heartlands of Veerasolam, Tamil Nadu, OT Kader Basha Sahib traveled to Kolkata. Bringing with him generational knowledge and an uncompromising standard for purity, he laid the very foundation of Ottis Perfumery House.
                   </p>
                 </div>
               </div>
 
-              {/* The Growth */}
-              <div className="flex flex-col md:flex-row-reverse gap-10 items-center">
-                <div className="md:w-1/3">
-                  <div className="aspect-square bg-gray-800 shadow-2xl rounded-full overflow-hidden border-4 border-[#0D1B2A]">
-                    <img src="/images/otkvellaiameer.jpeg" alt="OTK Vellai Amir" className="w-full h-full object-cover object-top" />
-                  </div>
+              <div className="flex flex-col md:flex-row-reverse items-center gap-8 md:gap-16">
+                <div className="w-[100%] md:w-1/2 flex justify-center md:justify-start relative">
+                  <div className="absolute top-[-20px] right-[10%] md:right-[auto] md:left-[260px] z-20 bg-[var(--royal)] text-[var(--off-white)] w-[40px] h-[40px] rounded-full flex items-center justify-center font-bold text-[1rem]">II</div>
+                  <img src="/images/otkvellaiameer.jpeg" loading="lazy" alt="OTK Vellai Amir" className="w-[100%] max-w-[320px] aspect-[4/5] object-cover object-top rounded-[8px] border border-[rgba(200,214,229,0.2)] relative z-10" />
                 </div>
-                <div className="md:w-2/3 text-left md:text-right">
-                  <h3 className="text-sm font-bold tracking-widest text-[#C8D6E5]/60 mb-2 uppercase">The Growth</h3>
-                  <h4 className="text-3xl mb-4 font-georgia text-white">OTK Vellai Amir</h4>
-                  <p className="text-xl leading-relaxed font-garamond text-[#C8D6E5]/90">
+                <div className="w-[100%] md:w-1/2 text-center md:text-right md:pl-4">
+                  <h3 className="text-[0.75rem] tracking-[0.15em] uppercase text-[var(--steel)] mb-2">The Growth</h3>
+                  <h4 className="text-2xl font-cormorant text-[var(--off-white)] mb-4">OTK Vellai Amir</h4>
+                  <p className="text-base text-[var(--steel)] leading-[1.7]">
                     As Generation II, OTK Vellai Amir deeply rooted the family&apos;s legacy. He expanded the prestigious Pollock Street reputation, cementing Ottis among the finest, most trusted attar merchants in Kolkata while relentlessly guarding the founder&apos;s original recipes.
                   </p>
                 </div>
               </div>
 
-              {/* The Future */}
-              <div className="flex flex-col md:flex-row gap-10 items-center">
-                <div className="md:w-1/3">
-                  <div className="aspect-square bg-gray-800 shadow-2xl rounded-full overflow-hidden border-4 border-[#0D1B2A]">
-                    <img src="/images/kaderShamshulhaque.jpeg" alt="Modern Generation" className="w-full h-full object-cover object-top" />
-                  </div>
+              <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
+                <div className="w-[100%] md:w-1/2 flex justify-center md:justify-end relative">
+                  <div className="absolute top-[-20px] left-[10%] md:left-[auto] md:right-[260px] z-20 bg-[var(--royal)] text-[var(--off-white)] w-[40px] h-[40px] rounded-full flex items-center justify-center font-bold text-[1rem]">III</div>
+                  <img src="/images/kaderShamshulhaque.jpeg" loading="lazy" alt="Modern Generation" className="w-[100%] max-w-[320px] aspect-[4/5] object-cover object-top rounded-[8px] border border-[rgba(200,214,229,0.2)] relative z-10" />
                 </div>
-                <div className="md:w-2/3">
-                  <h3 className="text-sm font-bold tracking-widest text-[#C8D6E5]/60 mb-2 uppercase">The Future</h3>
-                  <h4 className="text-3xl mb-4 font-georgia text-white">OT Kader Basha &amp; OT Kader Shamshul Haque <span className="text-[#C8D6E5]/80 font-garamond italic text-xl ml-2">(CEO)</span></h4>
-                  <p className="text-xl leading-relaxed font-garamond text-[#C8D6E5]/90">
+                <div className="w-[100%] md:w-1/2 text-center md:text-left md:pr-4">
+                  <h3 className="text-[0.75rem] tracking-[0.15em] uppercase text-[var(--steel)] mb-2">The Future</h3>
+                  <h4 className="text-2xl font-cormorant text-[var(--off-white)] mb-4">
+                    OT Kader Basha & OT Kader Shamshul Haque <span className="text-[var(--steel)]/80 italic font-cormorant font-normal text-lg">(CEO)</span>
+                  </h4>
+                  <p className="text-base text-[var(--steel)] leading-[1.7]">
                     Today, the present generation steers the House into a digital-first era. Marrying a century of analog mastery with modern accessibility, they are transforming traditional wholesale excellence into an accessible, beloved lifestyle brand.
                   </p>
                 </div>
               </div>
+
             </div>
           </div>
         </section>
 
       </main>
 
-      {/* 4. DETAILED FOOTER & CONTACT */}
-      <footer id="contact" className="bg-[#0A1521] text-[#C8D6E5] py-20 px-6 border-t-4 border-[#a54f4f]">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12">
-          
-          <div className="md:col-span-5">
-            <h3 className="text-3xl font-georgia mb-6 tracking-widest text-white">OTTIS PERFUMERY</h3>
-            <p className="text-xl font-garamond text-[#C8D6E5]/80 italic leading-relaxed mb-6">
-              Warm, expert, and deeply rooted in our community. <br/>
-              A 3-generation legacy of pristine Indian botanical oils and attars. 
-            </p>
-            <div className="flex items-center gap-3 text-lg font-garamond">
-              <MessageCircle size={20} className="text-[#25D366]"/>
-              <a href={getWhatsAppLink("Hi Ottis Perfumery, I have a general inquiry about your products and services.")} target="_blank" rel="noreferrer" className="hover:text-white transition">WhatsApp: +91 98310 13846</a>
+      <footer id="contact" className="bg-[#070F1A] text-[var(--steel)] border-t border-[rgba(200,214,229,0.12)] py-16 md:py-20 px-[24px] md:px-[40px]">
+        <div className="max-w-[1100px] mx-auto text-center md:text-left">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            
+            <div className="flex flex-col md:items-start items-center">
+              <h3 className="font-cormorant text-[1.1rem] font-bold text-[var(--off-white)] mb-2 uppercase tracking-widest">OTTIS PERFUMERY</h3>
+              <p className="text-[var(--steel)] text-[0.85rem] leading-[1.8] max-w-[300px] mb-4">
+                Warm, expert, and deeply rooted in our community.<br/>
+                A 3-generation legacy of pristine Indian botanical oils and attars. 
+              </p>
+              <div className="flex items-center gap-3 text-[0.95rem] min-h-[48px]">
+                <MessageCircle size={20} className="text-[#25D366]"/>
+                <a href={getWhatsAppLink("Hi Ottis Perfumery, I have a general inquiry about your products and services.")} target="_blank" rel="noreferrer" className="hover:text-[var(--off-white)] text-[var(--accent)] transition">WhatsApp: +91 98310 13846</a>
+              </div>
             </div>
-          </div>
 
-          <div className="md:col-span-4">
-            <h4 className="text-sm font-bold uppercase tracking-widest mb-6 text-white border-b border-[#C8D6E5]/10 pb-2 inline-block">Flagship Store</h4>
-            <address className="not-italic font-garamond text-[#C8D6E5]/80 leading-loose text-xl mb-4">
-              Ground Floor (Near Tea Board),<br/>
-              3A, Pollock Street,<br/>
-              Kolkata - 700001<br/>
-              India
-            </address>
-            <p className="font-garamond text-lg text-[#C8D6E5]/80">
-              Phone: <a href="tel:+919831013846" className="hover:text-white transition">9831013846</a><br />
-              Email: <a href="mailto:ottisperfumeryhaque@gmail.com" className="hover:text-white transition">ottisperfumeryhaque@gmail.com</a>
-            </p>
-          </div>
-
-          <div className="md:col-span-3">
-            <h4 className="text-sm font-bold uppercase tracking-widest mb-6 text-white border-b border-[#C8D6E5]/10 pb-2 inline-block">Quick Links</h4>
-            <div className="flex flex-col gap-3 font-garamond text-xl text-[#C8D6E5]/80">
-              <a href="https://instagram.com/ottis_perfumery" target="_blank" rel="noreferrer" className="hover:text-white transition">Instagram (@ottis_perfumery)</a>
-              <a href="#legacy" className="hover:text-white transition">Heritage Story</a>
-              <a href="#warehouse" className="hover:text-white transition">Wholesale Inquiries</a>
+            <div className="flex flex-col md:items-start items-center">
+              <h4 className="text-[0.85rem] font-bold uppercase tracking-widest mb-4 text-[var(--off-white)] text-center md:text-left">Flagship Store</h4>
+              <address className="not-italic text-[0.85rem] leading-[1.8] text-center md:text-left text-[var(--steel)]/90">
+                Ground Floor (Near Tea Board),<br/>
+                3A, Pollock Street,<br/>
+                Kolkata - 700001<br/>
+                India
+              </address>
+              <div className="mt-4 text-[0.85rem] text-center md:text-left">
+                <a href="tel:+919831013846" className="text-[var(--accent)] no-underline hover:underline block mb-2 min-h-[48px] flex items-center justify-center md:justify-start">Phone: +91 98310 13846</a>
+                <a href="mailto:ottisperfumeryhaque@gmail.com" className="text-[var(--accent)] no-underline hover:underline block min-h-[48px] flex items-center justify-center md:justify-start">Email: ottisperfumeryhaque@gmail.com</a>
+              </div>
             </div>
-          </div>
 
+            <div className="flex flex-col md:items-start items-center">
+              <h4 className="text-[0.85rem] font-bold uppercase tracking-widest mb-4 text-[var(--off-white)] text-center md:text-left">Quick Links</h4>
+              <div className="flex flex-col gap-2 text-[0.85rem] w-[100%] max-w-[200px]">
+                <a href="https://instagram.com/ottis_perfumery" target="_blank" rel="noreferrer" className="text-[var(--accent)] no-underline hover:underline min-h-[48px] flex items-center justify-center md:justify-start">Instagram (@ottis_perfumery)</a>
+                <a href="#legacy" className="text-[var(--accent)] no-underline hover:underline min-h-[48px] flex items-center justify-center md:justify-start">Heritage Story</a>
+                <a href="#warehouse" className="text-[var(--accent)] no-underline hover:underline min-h-[48px] flex items-center justify-center md:justify-start">Wholesale Inquiries</a>
+              </div>
+            </div>
+
+          </div>
         </div>
-        
-        <div className="mt-20 pt-8 border-t border-[#C8D6E5]/10 text-center text-lg font-garamond text-[#C8D6E5]/40 flex flex-col md:flex-row justify-between items-center gap-4 max-w-7xl mx-auto">
-          <span>&copy; {new Date().getFullYear()} Ottis Perfumery House. All rights reserved.</span>
-          <span className="italic">Authentic Artistry. Affordable Luxury.</span>
+
+        <div className="max-w-[1100px] mx-auto mt-16">
+          <div className="border-t border-[rgba(200,214,229,0.08)] pt-6 text-center text-[0.75rem] flex flex-col justify-between items-center gap-4 text-[var(--steel)]">
+            <span>&copy; {new Date().getFullYear()} Ottis Perfumery House. All rights reserved.</span>
+          </div>
         </div>
       </footer>
+
+      <a 
+        href={getWhatsAppLink("Hi Ottis Perfumery, I'm interested in booking a bespoke blending session!")} 
+        target="_blank" 
+        rel="noreferrer" 
+        className="md:hidden fixed bottom-6 right-6 z-[999] bg-[#25D366] text-white w-[52px] h-[52px] rounded-full shadow-[0_4px_16px_rgba(0,0,0,0.4)] transition-transform flex items-center justify-center"
+      >
+        <MessageCircle size={28} />
+      </a>
     </>
   );
 }
