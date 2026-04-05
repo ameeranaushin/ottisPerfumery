@@ -10,7 +10,7 @@ export default function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
 
   const WHATSAPP_NUMBER = "919831013846";
-  const getWhatsAppLink = (message) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  const getWhatsAppLink = (message: string) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 
   useEffect(() => {
     const handleScroll = () => {
